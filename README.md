@@ -49,27 +49,72 @@ export function getManifestFieldsData(args: {
   manifestPath: string
   browser?: string
 }): ManifestFields
+```
 
-// provenance (GitHub/npm provenance insight)
-export interface ProvenanceWorkflowInfo {
-  file: string
-  hasIdTokenWrite: boolean
-  hasProvenanceFlag: boolean
-  publishCommands: string[]
+## Expected output
+
+Given a manifest like:
+
+```json
+{
+  "manifest_version": 3,
+  "action": {"default_popup": "public/p.html"},
+  "chromium:action": {"default_popup": "public/c.html"},
+  "gecko:action": {"default_popup": "public/f.html"},
+  "icons": {"16": "icons/16.png", "48": "icons/48.png"},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {"resources": ["assets/*"], "matches": ["<all_urls>"]}
+  ]
 }
+```
 
-export interface ProvenanceData {
-  packageJsonPath?: string
-  packageName?: string
-  publishConfigProvenance?: boolean
-  workflowsDir?: string
-  workflows: ProvenanceWorkflowInfo[]
-  ciHasIdTokenWrite: boolean
-  ciUsesProvenanceFlag: boolean
-  enabled: boolean
-}
+Resolving for Chrome:
 
-export function getProvenanceData(args: {manifestPath: string}): ProvenanceData
+```ts
+import path from 'node:path'
+import {getManifestFieldsData} from 'browser-extension-manifest-fields'
+
+const manifestPath = '/abs/path/to/manifest.json'
+const res = getManifestFieldsData({manifestPath, browser: 'chrome'})
+
+// res shape
+res ===
+  {
+    html: {
+      // chromium:action beats generic and gecko-prefixed keys for Chrome
+      'action/index': path.join(path.dirname(manifestPath), 'public/c.html')
+    },
+    icons: {
+      '16': path.join(path.dirname(manifestPath), 'icons/16.png'),
+      '48': path.join(path.dirname(manifestPath), 'icons/48.png')
+    },
+    json: {},
+    scripts: {
+      content_scripts: [
+        {
+          matches: ['<all_urls>'],
+          js: [path.join(path.dirname(manifestPath), 'src/content.js')],
+          css: [path.join(path.dirname(manifestPath), 'src/content.css')]
+        }
+      ]
+    },
+    web_accessible_resources: {
+      // MV3: keep objects as-is, resources paths normalized to absolute
+      resources: [
+        {
+          resources: [path.join(path.dirname(manifestPath), 'assets/*')],
+          matches: ['<all_urls>']
+        }
+      ]
+    }
+  }
 ```
 
 ## License
