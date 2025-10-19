@@ -1,0 +1,85 @@
+{
+  "name": "browser-extension-manifest-fields",
+  "version": "1.0.6",
+  "description": "Parse and resolve browser extension manifest fields to absolute paths.",
+  "keywords": [
+    "browser-extension",
+    "webextension",
+    "chrome-extension",
+    "firefox",
+    "edge",
+    "manifest.json",
+    "manifest v3",
+    "mv3",
+    "mv2",
+    "web-accessible-resources",
+    "content_scripts",
+    "service_worker",
+    "devtools",
+    "icons",
+    "webpack",
+    "rspack",
+    "bundler"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/extension-js/extension.js.git",
+    "directory": "programs/develop/webpack/plugin-extension/data"
+  },
+  "homepage": "https://extension.js.org/",
+  "bugs": {
+    "url": "https://github.com/extension-js/extension.js/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./manifest-fields": {
+      "require": "./dist/manifest-fields/index.js",
+      "types": "./dist/manifest-fields/index.d.ts"
+    },
+    "./special-folders": {
+      "require": "./dist/special-folders/index.js",
+      "types": "./dist/special-folders/index.d.ts"
+    },
+    "./provenance": {
+      "require": "./dist/provenance/index.js",
+      "types": "./dist/provenance/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "test": "vitest run",
+    "dev": "vitest",
+    "format": "prettier --write \"**/*.{ts,tsx,md,js,json}\"",
+    "lint": "eslint .",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@rslib/core": "^0.3.0",
+    "@eslint/js": "^9.16.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.10.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.9.0"
+}
