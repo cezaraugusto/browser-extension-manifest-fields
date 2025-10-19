@@ -24,12 +24,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/extension-js/extension.js.git",
-    "directory": "programs/develop/webpack/plugin-extension/data"
+    "url": "https://github.com/cezaraugusto/browser-extension-manifest-fields"
   },
-  "homepage": "https://extension.js.org/",
+  "homepage": "https://github.com/cezaraugusto/browser-extension-manifest-fields#readme",
   "bugs": {
-    "url": "https://github.com/extension-js/extension.js/issues"
+    "url": "https://github.com/cezaraugusto/browser-extension-manifest-fields/issues"
   },
   "engines": {
     "node": ">=18"
