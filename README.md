@@ -1,11 +1,11 @@
-[powered-image]: https://img.shields.io/badge/Empowering-Extension.js-0971fe
-[powered-url]: https://extension.js.org
+[empowering-image]: https://img.shields.io/badge/Empowering-Extension.js-0971fe
+[empowering-url]: https://extension.js.org
 [version-image]: https://img.shields.io/npm/v/browser-extension-manifest-fields?label=version
 [version-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
-[ci-image]: https://img.shields.io/github/actions/workflow/status/extension-js/extension.js/pkg-manifest-fields-ci.yml?branch=main&label=CI
-[ci-url]: https://github.com/extension-js/extension.js/actions/workflows/pkg-manifest-fields-ci.yml
+[ci-image]: https://img.shields.io/github/actions/workflow/status/cezaraugusto/browser-extension-manifest-fields/ci.yml?branch=main&label=CI
+[ci-url]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions/workflows/ci.yml
 
-![Empowering Extension.js][powered-image] ![npm version][version-image] ![CI][ci-image]
+![Empowering Extension.js][empowering-image] ![npm version][version-image] ![CI][ci-image]
 
 # browser-extension-manifest-fields
 
