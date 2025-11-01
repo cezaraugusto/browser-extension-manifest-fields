@@ -1,6 +1,6 @@
 {
   "name": "browser-extension-manifest-fields",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Parse and resolve browser extension manifest fields to absolute paths.",
   "keywords": [
     "browser-extension",
