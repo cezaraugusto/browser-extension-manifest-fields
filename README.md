@@ -1,11 +1,13 @@
 [empowering-image]: https://img.shields.io/badge/Empowering-Extension.js-0971fe
 [empowering-url]: https://extension.js.org
-[version-image]: https://img.shields.io/npm/v/browser-extension-manifest-fields?label=version
-[version-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
-[ci-image]: https://img.shields.io/github/actions/workflow/status/cezaraugusto/browser-extension-manifest-fields/ci.yml?branch=main&label=CI
-[ci-url]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions/workflows/ci.yml
+[npm-version-image]: https://img.shields.io/npm/v/browser-extension-manifest-fields.svg?color=0971fe
+[npm-version-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
+[npm-downloads-image]: https://img.shields.io/npm/dm/browser-extension-manifest-fields.svg?color=2ecc40
+[npm-downloads-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
+[action-image]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions/workflows/ci.yml/badge.svg?branch=main
+[action-url]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions
 
-![Empowering Extension.js][empowering-image] ![npm version][version-image] ![CI][ci-image]
+[![Empowering Extension.js][empowering-image]][empowering-url] [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url]
 
 # browser-extension-manifest-fields
 
@@ -33,6 +35,47 @@ const fields = getManifestFieldsData({
 })
 ```
 
+Sample output:
+
+```json
+{
+  "html": {
+    "action/index": "/abs/path/to/public/chrome-popup.html",
+    "options_ui/page": "/abs/path/to/public/options.html"
+  },
+  "icons": {
+    "16": "/abs/path/to/icons/16.png",
+    "48": "/abs/path/to/icons/48.png"
+  },
+  "json": {
+    "declarative_net_request": [
+      { "id": "rules", "enabled": true, "path": "/abs/path/to/rules/rules_1.json" }
+    ]
+  },
+  "scripts": {
+    "background": {
+      "service_worker": "/abs/path/to/src/background.js",
+      "type": "module"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["/abs/path/to/src/content.js"],
+        "css": ["/abs/path/to/src/content.css"]
+      }
+    ]
+  },
+  "web_accessible_resources": {
+    "resources": [
+      {
+        "resources": ["/abs/path/to/assets/*"],
+        "matches": ["<all_urls>"]
+      }
+    ]
+  }
+}
+```
+
 ## API
 
 ```ts
@@ -51,71 +94,6 @@ export function getManifestFieldsData(args: {
 }): ManifestFields
 ```
 
-## Expected output
-
-Given a manifest like:
-
-```json
-{
-  "manifest_version": 3,
-  "action": {"default_popup": "public/p.html"},
-  "chromium:action": {"default_popup": "public/c.html"},
-  "gecko:action": {"default_popup": "public/f.html"},
-  "icons": {"16": "icons/16.png", "48": "icons/48.png"},
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/content.js"],
-      "css": ["src/content.css"]
-    }
-  ],
-  "web_accessible_resources": [
-    {"resources": ["assets/*"], "matches": ["<all_urls>"]}
-  ]
-}
-```
-
-Resolving for Chrome:
-
-```ts
-import path from 'node:path'
-import {getManifestFieldsData} from 'browser-extension-manifest-fields'
-
-const manifestPath = '/abs/path/to/manifest.json'
-const res = getManifestFieldsData({manifestPath, browser: 'chrome'})
-
-// res shape
-res ===
-  {
-    html: {
-      // chromium:action beats generic and gecko-prefixed keys for Chrome
-      'action/index': path.join(path.dirname(manifestPath), 'public/c.html')
-    },
-    icons: {
-      '16': path.join(path.dirname(manifestPath), 'icons/16.png'),
-      '48': path.join(path.dirname(manifestPath), 'icons/48.png')
-    },
-    json: {},
-    scripts: {
-      content_scripts: [
-        {
-          matches: ['<all_urls>'],
-          js: [path.join(path.dirname(manifestPath), 'src/content.js')],
-          css: [path.join(path.dirname(manifestPath), 'src/content.css')]
-        }
-      ]
-    },
-    web_accessible_resources: {
-      // MV3: keep objects as-is, resources paths normalized to absolute
-      resources: [
-        {
-          resources: [path.join(path.dirname(manifestPath), 'assets/*')],
-          matches: ['<all_urls>']
-        }
-      ]
-    }
-  }
-```
 
 ## License
 
