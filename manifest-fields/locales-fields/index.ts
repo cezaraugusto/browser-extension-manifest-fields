@@ -24,5 +24,5 @@ export function localesFields(
     }
   }
 
-  return localeFiles
+  return localeFiles.length ? localeFiles : undefined
 }

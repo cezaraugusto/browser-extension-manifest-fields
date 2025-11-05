@@ -12,7 +12,8 @@ export default defineConfig({
       'special-folders/index': path.resolve(
         __dirname,
         './special-folders/index.ts'
-      )
+      ),
+      'provenance/index': path.resolve(__dirname, './provenance/index.ts')
     }
   },
   lib: [{format: 'cjs', dts: true}]

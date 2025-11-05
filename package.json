@@ -64,7 +64,7 @@
     "dev": "vitest",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,json}\"",
     "lint": "eslint .",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run test && pnpm run build"
   },
   "devDependencies": {
     "@rslib/core": "^0.3.0",

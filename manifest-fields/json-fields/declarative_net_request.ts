@@ -1,4 +1,5 @@
 import * as path from 'path'
+import {resolveManifestPath} from '../normalize'
 type Manifest = Record<string, any>
 
 export function declarativeNetRequest(
@@ -19,10 +20,8 @@ export function declarativeNetRequest(
     manifest.declarative_net_request.rule_resources
 
   declarativeNetRequest.forEach((resource: {id: string; path: string}) => {
-    ruleResources[`declarative_net_request/${resource.id}`] = path.join(
-      context,
-      resource.path
-    )
+    ruleResources[`declarative_net_request/${resource.id}`] =
+      resolveManifestPath(context, resource.path)
   })
 
   return ruleResources

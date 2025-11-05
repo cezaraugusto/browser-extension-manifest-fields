@@ -1,3 +1,7 @@
 export {getManifestFieldsData} from './manifest-fields'
 export {getSpecialFoldersData} from './special-folders'
 export {getProvenanceData} from './provenance'
+export type {ManifestFields} from './manifest-fields'
+export type {ThemeFields} from './manifest-fields/theme-fields'
+export type {SemanticFields} from './manifest-fields/semantic-fields'
+export type {ProvenanceData, ProvenanceWorkflowInfo} from './provenance'

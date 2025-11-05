@@ -3,6 +3,12 @@ import * as path from 'path'
 type PluginInterface = {manifestPath: string}
 import {scanFilesInFolder, generateEntries} from './generate-entries'
 
+export interface SpecialFoldersEntries {
+  public: Record<string, string>
+  pages: Record<string, string>
+  scripts: Record<string, string>
+}
+
 // Get the actual case-sensitive path of the public folder
 // This handles the case where the folder might be named 'Public' on macOS but 'public' on Windows
 function getPublicFolderPath(projectPath: string): string {
@@ -19,7 +25,7 @@ function getPublicFolderPath(projectPath: string): string {
   return path.join(projectPath, 'public')
 }
 
-export function getSpecialFoldersData({manifestPath}: PluginInterface) {
+export function getSpecialFoldersData({manifestPath}: PluginInterface): SpecialFoldersEntries {
   const projectPath = path.dirname(manifestPath)
 
   // Define special folders with case-sensitive public folder detection
