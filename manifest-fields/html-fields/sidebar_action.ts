@@ -1,18 +1,18 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function sidebarAction(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): string | undefined {
   if (
     !manifest ||
     !manifest.sidebar_action ||
     !manifest.sidebar_action.default_panel
   ) {
-    return undefined
+    return undefined;
   }
 
-  const sidebarActionPage: string = manifest.sidebar_action.default_panel
-  return resolveManifestPath(context, sidebarActionPage)
+  const sidebarActionPage: string = manifest.sidebar_action.default_panel;
+  return resolveManifestPath(context, sidebarActionPage);
 }

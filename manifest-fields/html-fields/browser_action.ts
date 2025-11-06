@@ -1,19 +1,19 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function browserAction(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): string | undefined {
   if (
     !manifest ||
     !manifest.browser_action ||
     !manifest.browser_action.default_popup
   ) {
-    return undefined
+    return undefined;
   }
 
-  const browserActionPage: string = manifest.browser_action.default_popup
+  const browserActionPage: string = manifest.browser_action.default_popup;
 
-  return resolveManifestPath(context, browserActionPage)
+  return resolveManifestPath(context, browserActionPage);
 }

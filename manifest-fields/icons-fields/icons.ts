@@ -1,18 +1,18 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function icons(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): string[] | undefined {
-  if (!manifest || !manifest.icons) return undefined
+  if (!manifest || !manifest.icons) return undefined;
 
-  const defaultIcons: string[] = []
+  const defaultIcons: string[] = [];
   for (const icon in manifest.icons) {
-    const iconAbsolutePath = resolveManifestPath(context, manifest.icons[icon])
+    const iconAbsolutePath = resolveManifestPath(context, manifest.icons[icon]);
 
-    defaultIcons.push(iconAbsolutePath)
+    defaultIcons.push(iconAbsolutePath);
   }
 
-  return defaultIcons
+  return defaultIcons;
 }

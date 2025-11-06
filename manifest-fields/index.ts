@@ -24,17 +24,17 @@ export interface ManifestFields {
 
 export function getManifestFieldsData({
   manifestPath,
-  browser
+  browser,
 }: {
-  manifestPath: string
-  browser?: string
+  manifestPath: string;
+  browser?: string;
 }) {
-  const context = path.dirname(manifestPath)
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  const context = path.dirname(manifestPath);
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   const manifestNoPrefixes = filterKeysForThisBrowser(
     manifest,
-    browser || 'chrome'
-  )
+    browser || "chrome",
+  );
 
   const fieldData = {
     html: htmlFields(context, manifestNoPrefixes),

@@ -1,19 +1,19 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function userScripts(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): string | undefined {
   if (
     !manifest ||
     !manifest.user_scripts ||
     !manifest.user_scripts.api_script
   ) {
-    return undefined
+    return undefined;
   }
 
-  const userScript: string = manifest.user_scripts.api_script
+  const userScript: string = manifest.user_scripts.api_script;
 
-  return resolveManifestPath(context, userScript)
+  return resolveManifestPath(context, userScript);
 }

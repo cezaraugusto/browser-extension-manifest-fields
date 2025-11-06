@@ -4,25 +4,25 @@ type Manifest = Record<string, any>
 
 export function declarativeNetRequest(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): Record<string, string | undefined> {
-  const ruleResources: Record<string, string> = {}
+  const ruleResources: Record<string, string> = {};
 
   if (
     !manifest ||
     !manifest.declarative_net_request ||
     !manifest.declarative_net_request.rule_resources
   ) {
-    return {'declarative_net_request/rule_resources-0': undefined}
+    return { "declarative_net_request/rule_resources-0": undefined };
   }
 
   const declarativeNetRequest: Record<string, any> =
-    manifest.declarative_net_request.rule_resources
+    manifest.declarative_net_request.rule_resources;
 
   declarativeNetRequest.forEach((resource: {id: string; path: string}) => {
     ruleResources[`declarative_net_request/${resource.id}`] =
       resolveManifestPath(context, resource.path)
   })
 
-  return ruleResources
+  return ruleResources;
 }

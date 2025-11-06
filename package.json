@@ -34,23 +34,32 @@
     "node": ">=18"
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.mjs"
     },
     "./manifest-fields": {
+      "types": "./dist/manifest-fields/index.d.ts",
+      "import": "./dist/manifest-fields/index.mjs",
       "require": "./dist/manifest-fields/index.js",
-      "types": "./dist/manifest-fields/index.d.ts"
+      "default": "./dist/manifest-fields/index.mjs"
     },
     "./special-folders": {
+      "types": "./dist/special-folders/index.d.ts",
+      "import": "./dist/special-folders/index.mjs",
       "require": "./dist/special-folders/index.js",
-      "types": "./dist/special-folders/index.d.ts"
+      "default": "./dist/special-folders/index.mjs"
     },
     "./provenance": {
+      "types": "./dist/provenance/index.d.ts",
+      "import": "./dist/provenance/index.mjs",
       "require": "./dist/provenance/index.js",
-      "types": "./dist/provenance/index.d.ts"
+      "default": "./dist/provenance/index.mjs"
     }
   },
   "files": [
@@ -58,6 +67,7 @@
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "rslib build",
     "test": "vitest run",

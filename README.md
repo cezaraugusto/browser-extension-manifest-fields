@@ -27,12 +27,12 @@ Parse a `manifest.json` and resolve file paths for HTML, icons, JSON, scripts, l
 ## Usage
 
 ```ts
-import {getManifestFieldsData} from 'browser-extension-manifest-fields'
+import { getManifestFieldsData } from "browser-extension-manifest-fields";
 
 // Resolve manifest field paths
 const fields = getManifestFieldsData({
-  manifestPath: '/abs/path/to/manifest.json'
-})
+  manifestPath: "/abs/path/to/manifest.json",
+});
 ```
 
 Sample output:
@@ -48,7 +48,13 @@ Sample output:
     "icons": ["/abs/path/to/icons/16.png", "/abs/path/to/icons/48.png"]
   },
   "json": {
-    "declarative_net_request/rules": "/abs/path/to/rules/rules_1.json"
+    "declarative_net_request": [
+      {
+        "id": "rules",
+        "enabled": true,
+        "path": "/abs/path/to/rules/rules_1.json"
+      }
+    ]
   },
   "scripts": {
     "background/service_worker": "/abs/path/to/src/background.js",
@@ -106,9 +112,9 @@ export interface ManifestFields {
 }
 
 export function getManifestFieldsData(args: {
-  manifestPath: string
-  browser?: string
-}): ManifestFields
+  manifestPath: string;
+  browser?: string;
+}): ManifestFields;
 ```
 
 ### Special folders helper

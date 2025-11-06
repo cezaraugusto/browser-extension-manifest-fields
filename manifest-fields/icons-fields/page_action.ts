@@ -1,35 +1,35 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function pageAction(
   context: string,
-  manifest: Manifest
+  manifest: Manifest,
 ): string | string[] | undefined {
   if (
     !manifest ||
     !manifest.page_action ||
     !manifest.page_action.default_icon
   ) {
-    return undefined
+    return undefined;
   }
 
-  if (typeof manifest.page_action.default_icon === 'string') {
+  if (typeof manifest.page_action.default_icon === "string") {
     return resolveManifestPath(
       context,
-      manifest.page_action.default_icon as string
-    )
+      manifest.page_action.default_icon as string,
+    );
   }
 
-  const pageActionDefaultIcons: string[] = []
+  const pageActionDefaultIcons: string[] = [];
 
   for (const icon in manifest.page_action.default_icon) {
     const pageactionDefaultIconAbsolutePath = resolveManifestPath(
       context,
-      manifest.page_action.default_icon[icon] as string
-    )
+      manifest.page_action.default_icon[icon] as string,
+    );
 
-    pageActionDefaultIcons.push(pageactionDefaultIconAbsolutePath)
+    pageActionDefaultIcons.push(pageactionDefaultIconAbsolutePath);
   }
 
-  return pageActionDefaultIcons
+  return pageActionDefaultIcons;
 }

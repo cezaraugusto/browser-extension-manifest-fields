@@ -1,37 +1,37 @@
-import {resolveManifestPath} from '../normalize'
-type Manifest = Record<string, any>
+import { resolveManifestPath } from "../normalize";
+type Manifest = Record<string, any>;
 
 export function browserAction(
   context: string,
 
-  manifest: Manifest
+  manifest: Manifest,
 ): string | string[] | undefined {
   if (
     !manifest ||
     !manifest.browser_action ||
     !manifest.browser_action.default_icon
   ) {
-    return undefined
+    return undefined;
   }
 
-  const browserActionDefaultIcons: string[] = []
+  const browserActionDefaultIcons: string[] = [];
 
-  if (typeof manifest.browser_action.default_icon === 'string') {
+  if (typeof manifest.browser_action.default_icon === "string") {
     return resolveManifestPath(
       context,
-      manifest.browser_action.default_icon as string
-    )
+      manifest.browser_action.default_icon as string,
+    );
   }
 
   for (const icon in manifest.browser_action.default_icon) {
     const browserActionDefaultIconAbsolutePath =
       (manifest.browser_action.default_icon[icon] = resolveManifestPath(
         context,
-        manifest.browser_action.default_icon[icon] as string
-      ))
+        manifest.browser_action.default_icon[icon] as string,
+      ));
 
-    browserActionDefaultIcons.push(browserActionDefaultIconAbsolutePath)
+    browserActionDefaultIcons.push(browserActionDefaultIconAbsolutePath);
   }
 
-  return browserActionDefaultIcons
+  return browserActionDefaultIcons;
 }
