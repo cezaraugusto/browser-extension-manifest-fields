@@ -69,6 +69,18 @@ describe("icons field resolvers", () => {
     expect(sidebarAction(ctx, m2)).toBe(path.join(ctx, "public/s.png"));
   });
 
+  it("resolves sidebar_action default_icon object map", () => {
+    const m: any = {
+      sidebar_action: {
+        default_icon: { 16: "public/16.png", 32: "/public/32.png" },
+      },
+    };
+    expect(sidebarAction(ctx, m)).toEqual([
+      path.join(ctx, "public/16.png"),
+      path.join(ctx, "public/32.png"),
+    ]);
+  });
+
   it("iconFields aggregator returns combined map", () => {
     const m: any = {
       action: { default_icon: "a.png" },

@@ -4,7 +4,7 @@ type Manifest = Record<string, any>;
 export function sidebarAction(
   context: string,
   manifest: Manifest,
-): string | undefined {
+): string | string[] | undefined {
   if (
     !manifest ||
     !manifest.sidebar_action ||
@@ -13,10 +13,23 @@ export function sidebarAction(
     return undefined;
   }
 
-  const sidebarActionDefaultIcon = resolveManifestPath(
-    context,
-    manifest.sidebar_action.default_icon as string,
-  );
+  if (typeof manifest.sidebar_action.default_icon === "string") {
+    return resolveManifestPath(
+      context,
+      manifest.sidebar_action.default_icon as string,
+    );
+  }
 
-  return sidebarActionDefaultIcon;
+  const sidebarActionDefaultIcons: string[] = [];
+
+  for (const icon in manifest.sidebar_action.default_icon) {
+    const sidebarActionDefaultIconAbsolutePath = resolveManifestPath(
+      context,
+      manifest.sidebar_action.default_icon[icon] as string,
+    );
+
+    sidebarActionDefaultIcons.push(sidebarActionDefaultIconAbsolutePath);
+  }
+
+  return sidebarActionDefaultIcons;
 }
