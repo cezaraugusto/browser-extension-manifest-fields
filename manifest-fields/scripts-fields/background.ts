@@ -1,21 +1,22 @@
-import { resolveManifestPath } from "../normalize";
-type Manifest = Record<string, any>;
+import {resolveManifestPath} from '../normalize'
 
-export function backgroundScripts(
+type Manifest = Record<string, any>
+
+export function backgroundScripts (
   context: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): string[] | undefined {
   if (!manifest || !manifest.background) {
-    return undefined;
+    return undefined
   }
 
-  const scripts = manifest.background.scripts;
+  const {scripts} = manifest.background
 
   if (scripts) {
     return scripts.map((script: string) => {
-      return resolveManifestPath(context, script);
-    });
+      return resolveManifestPath(context, script)
+    })
   }
 
-  return undefined;
+  return undefined
 }

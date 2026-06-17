@@ -1,9 +1,11 @@
 import {describe, it, expect} from 'vitest'
+
 import {themeFields} from '../../manifest-fields/theme-fields'
 
 describe('themeFields', () => {
   it('returns undefined when no theme/images', () => {
     const out = themeFields('/root/app', {})
+
     expect(out).toBeUndefined()
   })
 
@@ -17,7 +19,9 @@ describe('themeFields', () => {
         }
       }
     }
+
     const out = themeFields('/root/app', manifest)!
+
     expect(out['theme/images/frame.png']).toBe('/root/app/images/frame.png')
     // Leading '/' resolves from extension root (manifest directory)
     expect(out['theme/images/toolbar.svg']).toBe('/root/app/images/toolbar.svg')
@@ -30,6 +34,7 @@ describe('themeFields', () => {
   it('ignores non-string entries', () => {
     const manifest = {theme: {images: {foo: 123}}}
     const out = themeFields('/root/app', manifest)
+
     expect(out).toBeUndefined()
   })
 })

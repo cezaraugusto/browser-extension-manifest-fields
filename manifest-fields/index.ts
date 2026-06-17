@@ -1,5 +1,6 @@
 import * as path from 'path'
 import * as fs from 'fs'
+
 import {htmlFields} from './html-fields'
 import {iconFields} from './icons-fields'
 import {jsonFields} from './json-fields'
@@ -22,19 +23,19 @@ export interface ManifestFields {
   semantic?: SemanticFields
 }
 
-export function getManifestFieldsData({
+export function getManifestFieldsData ({
   manifestPath,
-  browser,
+  browser
 }: {
   manifestPath: string;
   browser?: string;
 }) {
-  const context = path.dirname(manifestPath);
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  const context = path.dirname(manifestPath)
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
   const manifestNoPrefixes = filterKeysForThisBrowser(
     manifest,
-    browser || "chrome",
-  );
+    browser || 'chrome'
+  )
 
   const fieldData = {
     html: htmlFields(context, manifestNoPrefixes),
@@ -46,5 +47,6 @@ export function getManifestFieldsData({
     theme: themeFields(context, manifestNoPrefixes),
     semantic: semanticFields(manifestNoPrefixes)
   }
+
   return fieldData
 }

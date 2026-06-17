@@ -2,23 +2,23 @@ type Manifest = Record<string, any>
 
 export type SemanticFields =
   | {
-      permissions?: string[]
-      optional_permissions?: string[]
-      host_permissions?: string[]
-      csp?:
-        | {mv: 2; value?: string}
-        | {
-            mv: 3
-            extension_pages?: string
-            sandbox?: string
-            raw?: Record<string, any>
-          }
-      externally_connectable?: Record<string, any>
-      gecko_id?: string
-    }
-  | undefined
+    permissions?: string[]
+    optional_permissions?: string[]
+    host_permissions?: string[]
+    csp?:
+        | {mv: 2; value?: string} |
+        {
+          mv: 3
+          extension_pages?: string
+          sandbox?: string
+          raw?: Record<string, any>
+        }
+    externally_connectable?: Record<string, any>
+    gecko_id?: string
+  } |
+  undefined
 
-export function semanticFields(manifest: Manifest): SemanticFields {
+export function semanticFields (manifest: Manifest): SemanticFields {
   if (!manifest || typeof manifest !== 'object') return
 
   const out: NonNullable<SemanticFields> = {}
@@ -26,12 +26,14 @@ export function semanticFields(manifest: Manifest): SemanticFields {
   if (Array.isArray(manifest.permissions) && manifest.permissions.length) {
     out.permissions = [...manifest.permissions]
   }
+
   if (
     Array.isArray(manifest.optional_permissions) &&
     manifest.optional_permissions.length
   ) {
     out.optional_permissions = [...manifest.optional_permissions]
   }
+
   if (
     Array.isArray(manifest.host_permissions) &&
     manifest.host_permissions.length
@@ -45,6 +47,7 @@ export function semanticFields(manifest: Manifest): SemanticFields {
     }
   } else if (manifest.manifest_version === 3) {
     const csp = manifest.content_security_policy
+
     if (csp && typeof csp === 'object') {
       out.csp = {
         mv: 3,
@@ -66,6 +69,7 @@ export function semanticFields(manifest: Manifest): SemanticFields {
     manifest.browser_specific_settings &&
     manifest.browser_specific_settings.gecko &&
     manifest.browser_specific_settings.gecko.id
+
   if (typeof geckoId === 'string' && geckoId) {
     out.gecko_id = geckoId
   }
