@@ -1,5 +1,3 @@
-[empowering-image]: https://img.shields.io/badge/Empowering-Extension.js-0971fe
-[empowering-url]: https://extension.js.org
 [npm-version-image]: https://img.shields.io/npm/v/browser-extension-manifest-fields.svg?color=0971fe
 [npm-version-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
 [npm-downloads-image]: https://img.shields.io/npm/dm/browser-extension-manifest-fields.svg?color=2ecc40
@@ -7,11 +5,9 @@
 [action-image]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions/workflows/ci.yml/badge.svg?branch=main
 [action-url]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions
 
-[![Empowering Extension.js][empowering-image]][empowering-url] [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url]
-
-# browser-extension-manifest-fields
-
 > Parse and resolve browser extension manifest fields to absolute paths.
+
+# browser-extension-manifest-fields [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url]
 
 Parse a `manifest.json` and resolve file paths for HTML, icons, JSON, scripts, locales, web accessible resources; also surface theme image paths and semantic fields used for restart-required decisions.
 
@@ -150,4 +146,4 @@ const prov = getProvenanceData({manifestPath: '/abs/path/manifest.json'})
 
 ## License
 
-MIT (c) Cezar Augusto
+MIT (c) Cezar Augusto.
