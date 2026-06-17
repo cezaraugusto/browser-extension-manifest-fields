@@ -1,14 +1,16 @@
-import { resolveManifestPath } from "../normalize";
-type Manifest = Record<string, any>;
+import {resolveManifestPath} from '../normalize'
 
-export function sidePanel(
+type Manifest = Record<string, any>
+
+export function sidePanel (
   context: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): string | undefined {
   if (!manifest || !manifest.side_panel || !manifest.side_panel.default_path) {
-    return undefined;
+    return undefined
   }
 
-  const sidePanelPath = manifest.side_panel.default_path;
-  return resolveManifestPath(context, sidePanelPath);
+  const sidePanelPath = manifest.side_panel.default_path
+
+  return resolveManifestPath(context, sidePanelPath)
 }

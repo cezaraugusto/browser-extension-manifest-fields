@@ -1,14 +1,15 @@
-import { declarativeNetRequest } from "./declarative_net_request";
-import { storage } from "./storage";
-type Manifest = Record<string, any>;
+import {declarativeNetRequest} from './declarative_net_request'
+import {storage} from './storage'
 
-export function jsonFields(
+type Manifest = Record<string, any>
+
+export function jsonFields (
   context: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): Record<string, string | undefined> {
   return {
-    // read as: declarativeNetRequest/<id>: declarativeNetRequest(manifestPath, manifest),
+    // Read as: declarativeNetRequest/<id>: declarativeNetRequest(manifestPath, manifest),
     ...declarativeNetRequest(context, manifest),
-    "storage/managed_schema": storage(context, manifest),
-  };
+    'storage/managed_schema': storage(context, manifest)
+  }
 }

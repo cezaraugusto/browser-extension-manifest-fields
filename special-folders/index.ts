@@ -1,7 +1,9 @@
-import * as fs from "fs";
-import * as path from "path";
-type PluginInterface = { manifestPath: string };
-import { scanFilesInFolder, generateEntries } from "./generate-entries";
+import * as fs from 'fs'
+import * as path from 'path'
+
+import {scanFilesInFolder, generateEntries} from './generate-entries'
+
+type PluginInterface = {manifestPath: string}
 
 export interface SpecialFoldersEntries {
   public: Record<string, string>
@@ -11,47 +13,47 @@ export interface SpecialFoldersEntries {
 
 // Get the actual case-sensitive path of the public folder
 // This handles the case where the folder might be named 'Public' on macOS but 'public' on Windows
-function getPublicFolderPath(projectPath: string): string {
-  const possibleNames = ["public", "Public", "PUBLIC"];
+function getPublicFolderPath (projectPath: string): string {
+  const possibleNames = ['public', 'Public', 'PUBLIC']
 
   for (const name of possibleNames) {
-    const folderPath = path.join(projectPath, name);
+    const folderPath = path.join(projectPath, name)
+
     if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
-      return folderPath;
+      return folderPath
     }
   }
 
   // Fallback to lowercase 'public' if no folder exists
-  return path.join(projectPath, "public");
+  return path.join(projectPath, 'public')
 }
 
-export function getSpecialFoldersData({manifestPath}: PluginInterface): SpecialFoldersEntries {
+export function getSpecialFoldersData ({manifestPath}: PluginInterface): SpecialFoldersEntries {
   const projectPath = path.dirname(manifestPath)
 
   // Define special folders with case-sensitive public folder detection
   const folders = {
     public: getPublicFolderPath(projectPath),
-    pages: path.join(projectPath, "pages"),
-    scripts: path.join(projectPath, "scripts"),
-  };
+    pages: path.join(projectPath, 'pages'),
+    scripts: path.join(projectPath, 'scripts')
+  }
 
   // Scan files in each folder
   const allFiles = {
     public: scanFilesInFolder(folders.public, () => true),
-    pages: scanFilesInFolder(folders.pages, (name) => name.endsWith(".html")),
+    pages: scanFilesInFolder(folders.pages, (name) => name.endsWith('.html')),
     scripts: scanFilesInFolder(folders.scripts, (name) =>
-      [".js", ".mjs", ".jsx", ".mjsx", ".ts", ".mts", ".tsx", ".mtsx"].includes(
-        path.extname(name),
-      ),
-    ),
-  };
+      ['.js', '.mjs', '.jsx', '.mjsx', '.ts', '.mts', '.tsx', '.mtsx'].includes(
+        path.extname(name)
+      ))
+  }
 
   // Generate entries for each folder
   const entries = {
     public: generateEntries(projectPath, allFiles.public),
-    pages: generateEntries(projectPath, allFiles.pages, "pages"),
-    scripts: generateEntries(projectPath, allFiles.scripts, "scripts"),
-  };
+    pages: generateEntries(projectPath, allFiles.pages, 'pages'),
+    scripts: generateEntries(projectPath, allFiles.scripts, 'scripts')
+  }
 
-  return entries;
+  return entries
 }

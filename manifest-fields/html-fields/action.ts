@@ -1,15 +1,16 @@
-import { resolveManifestPath } from "../normalize";
-type Manifest = Record<string, any>;
+import {resolveManifestPath} from '../normalize'
 
-export function action(
+type Manifest = Record<string, any>
+
+export function action (
   context: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): string | undefined {
   if (!manifest || !manifest.action || !manifest.action.default_popup) {
-    return undefined;
+    return undefined
   }
 
-  const actionPage: string = manifest.action.default_popup;
+  const actionPage: string = manifest.action.default_popup
 
-  return resolveManifestPath(context, actionPage);
+  return resolveManifestPath(context, actionPage)
 }

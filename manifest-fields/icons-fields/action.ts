@@ -1,29 +1,30 @@
-import { resolveManifestPath } from "../normalize";
-type Manifest = Record<string, any>;
+import {resolveManifestPath} from '../normalize'
 
-export function action(
+type Manifest = Record<string, any>
+
+export function action (
   context: string,
 
-  manifest: Manifest,
+  manifest: Manifest
 ): string | string[] | undefined {
   if (!manifest || !manifest.action || !manifest.action.default_icon) {
-    return undefined;
+    return undefined
   }
 
-  if (typeof manifest.action.default_icon === "string") {
-    return resolveManifestPath(context, manifest.action.default_icon as string);
+  if (typeof manifest.action.default_icon === 'string') {
+    return resolveManifestPath(context, manifest.action.default_icon as string)
   }
 
-  const actionDefaultIcons: string[] = [];
+  const actionDefaultIcons: string[] = []
 
   for (const icon in manifest.action.default_icon) {
     actionDefaultIcons.push(
       resolveManifestPath(
         context,
-        manifest.action.default_icon[icon] as string,
-      ),
-    );
+        manifest.action.default_icon[icon] as string
+      )
+    )
   }
 
-  return actionDefaultIcons;
+  return actionDefaultIcons
 }

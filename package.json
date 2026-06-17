@@ -72,19 +72,17 @@
     "build": "rslib build",
     "test": "vitest run",
     "dev": "vitest",
-    "format": "prettier --write \"**/*.{ts,tsx,md,js,json}\"",
     "lint": "eslint .",
-    "prepublishOnly": "pnpm run test && pnpm run build"
+    "prepublishOnly": "pnpm run test && pnpm run build",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@rslib/core": "^0.3.0",
-    "@eslint/js": "^9.16.0",
-    "eslint": "^9.16.0",
-    "globals": "^15.13.0",
-    "prettier": "^3.4.2",
+    "@types/node": "^22.10.1",
+    "eslint": "^10.5.0",
+    "eslint-config-auditor": "workspace:*",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.0",
-    "@types/node": "^22.10.1"
+    "vitest": "^2.1.0"
   },
   "publishConfig": {
     "access": "public",
