@@ -1,4 +1,5 @@
 import {describe, it, expect} from 'vitest'
+
 import {semanticFields} from '../../manifest-fields/semantic-fields'
 
 describe('semanticFields', () => {
@@ -11,6 +12,7 @@ describe('semanticFields', () => {
       permissions: ['storage'],
       host_permissions: ['https://*/*']
     })!
+
     expect(out.permissions).toEqual(['storage'])
     expect(out.host_permissions).toEqual(['https://*/*'])
   })
@@ -21,6 +23,7 @@ describe('semanticFields', () => {
       content_security_policy:
         "script-src 'self' 'unsafe-eval'; object-src 'self'"
     })!
+
     expect(out.csp).toEqual({
       mv: 2,
       value: "script-src 'self' 'unsafe-eval'; object-src 'self'"
@@ -35,6 +38,7 @@ describe('semanticFields', () => {
         sandbox: "sandbox-src 'self'"
       }
     })!
+
     expect(out.csp?.mv).toBe(3)
     expect(out.csp?.extension_pages).toBe("script-src 'self'")
     expect(out.csp?.sandbox).toBe("sandbox-src 'self'")
@@ -45,6 +49,7 @@ describe('semanticFields', () => {
       externally_connectable: {ids: ['*']},
       browser_specific_settings: {gecko: {id: 'my-ext@example.org'}}
     })!
+
     expect(out.externally_connectable).toEqual({ids: ['*']})
     expect(out.gecko_id).toBe('my-ext@example.org')
   })

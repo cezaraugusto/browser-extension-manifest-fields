@@ -1,14 +1,6 @@
-import js from '@eslint/js'
+import ts from 'eslint-config-auditor/ts'
 
 export default [
-  js.configs.recommended,
-  {
-    ignores: [
-      'dist/',
-      'coverage/',
-      'node_modules/',
-      '__spec__/'
-    ]
-  }
+  {ignores: ['dist/**', 'build/**', 'out/**', 'coverage/**', '**/__fixtures__/**', '**/fixtures/**', '**/__mocks__/**', '**/__snapshots__/**', '**/*.min.js', '**/vendor/**', '**/*.json', 'eslint.config.mjs']},
+  ...ts,
 ]
-

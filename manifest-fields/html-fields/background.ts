@@ -1,14 +1,16 @@
-import { resolveManifestPath } from "../normalize";
-type Manifest = Record<string, any>;
+import {resolveManifestPath} from '../normalize'
 
-export function background(
+type Manifest = Record<string, any>
+
+export function background (
   context: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): string | undefined {
   if (!manifest || !manifest.background || !manifest.background.page) {
-    return undefined;
+    return undefined
   }
 
-  const backgroundPage: string = manifest.background.page;
-  return resolveManifestPath(context, backgroundPage);
+  const backgroundPage: string = manifest.background.page
+
+  return resolveManifestPath(context, backgroundPage)
 }
