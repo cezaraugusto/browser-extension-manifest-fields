@@ -59,14 +59,36 @@ describe('html field resolvers', () => {
     )
   })
 
-  it('chrome_url_overrides maps keys correctly (last key wins)', () => {
+  it('chrome_url_overrides keeps every declared override (not just the last)', () => {
     const result = chromeUrlOverrides(ctx, manifest)
 
-    // Per implementation, the last processed property overwrites previous
-    expect(Object.keys(result)[0]).toBe('chrome_url_overrides/bookmarks')
+    // Regression: an extension may override newtab + bookmarks + history at
+    // once; each declared page must be present (the old code reassigned the
+    // result and dropped all but the last-declared key).
+    expect(result['chrome_url_overrides/newtab']).toBe(
+      path.join(ctx, 'public/newtab.html')
+    )
     expect(result['chrome_url_overrides/bookmarks']).toBe(
       path.join(ctx, 'public/bookmarks.html')
     )
+    expect(result['chrome_url_overrides/history']).toBe(
+      path.join(ctx, 'public/history.html')
+    )
+    expect(Object.keys(result).sort()).toEqual([
+      'chrome_url_overrides/bookmarks',
+      'chrome_url_overrides/history',
+      'chrome_url_overrides/newtab'
+    ])
+  })
+
+  it('chrome_url_overrides returns a single declared override on its own key', () => {
+    const result = chromeUrlOverrides(ctx, {
+      chrome_url_overrides: {newtab: 'public/newtab.html'}
+    } as any)
+
+    expect(result).toEqual({
+      'chrome_url_overrides/newtab': path.join(ctx, 'public/newtab.html')
+    })
   })
 
   it('sandbox lists each page index', () => {
