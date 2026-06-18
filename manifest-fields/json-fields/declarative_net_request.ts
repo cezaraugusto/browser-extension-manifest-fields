@@ -18,8 +18,13 @@ export function declarativeNetRequest (
     return {'declarative_net_request/rule_resources-0': undefined}
   }
 
-  const declarativeNetRequest: Record<string, any> =
-    manifest.declarative_net_request.rule_resources
+  const declarativeNetRequest = manifest.declarative_net_request.rule_resources
+
+  // `rule_resources` is spec'd as an array; guard so a malformed (non-array)
+  // value is ignored instead of throwing `.forEach is not a function`.
+  if (!Array.isArray(declarativeNetRequest)) {
+    return {'declarative_net_request/rule_resources-0': undefined}
+  }
 
   declarativeNetRequest.forEach((resource: {id: string; path: string}) => {
     ruleResources[`declarative_net_request/${resource.id}`] =

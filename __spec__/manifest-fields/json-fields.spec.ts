@@ -29,6 +29,14 @@ describe('json field resolvers', () => {
     )
   })
 
+  it('ignores a non-array rule_resources instead of throwing', () => {
+    const m: any = {declarative_net_request: {rule_resources: 'oops'}}
+
+    expect(declarativeNetRequest(ctx, m)).toEqual({
+      'declarative_net_request/rule_resources-0': undefined
+    })
+  })
+
   it('storage resolves managed_schema', () => {
     const m: any = {storage: {managed_schema: 'public/schema.json'}}
 

@@ -24,14 +24,15 @@ export function browserAction (
     )
   }
 
+  // Resolve into a new array without mutating the manifest in place (the sibling
+  // action/page_action/sidebar_action resolvers don't mutate either).
   for (const icon in manifest.browser_action.default_icon) {
-    const browserActionDefaultIconAbsolutePath =
-      (manifest.browser_action.default_icon[icon] = resolveManifestPath(
+    browserActionDefaultIcons.push(
+      resolveManifestPath(
         context,
         manifest.browser_action.default_icon[icon] as string
-      ))
-
-    browserActionDefaultIcons.push(browserActionDefaultIconAbsolutePath)
+      )
+    )
   }
 
   return browserActionDefaultIcons
