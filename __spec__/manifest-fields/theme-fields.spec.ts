@@ -37,4 +37,31 @@ describe('themeFields', () => {
 
     expect(out).toBeUndefined()
   })
+
+  it('expands additional_backgrounds arrays into one entry per image', () => {
+    const manifest = {
+      theme: {
+        images: {
+          theme_frame: 'header.png',
+          additional_backgrounds: ['bg/one.png', 'bg/two.png']
+        }
+      }
+    }
+
+    const out = themeFields('/root/app', manifest)!
+
+    expect(out['theme/images/header.png']).toBe('/root/app/header.png')
+    expect(out['theme/images/one.png']).toBe('/root/app/bg/one.png')
+    expect(out['theme/images/two.png']).toBe('/root/app/bg/two.png')
+  })
+
+  it('skips non-string entries inside an array', () => {
+    const manifest = {
+      theme: {images: {additional_backgrounds: ['ok.png', 123, '', null]}}
+    }
+
+    const out = themeFields('/root/app', manifest)!
+
+    expect(Object.keys(out)).toEqual(['theme/images/ok.png'])
+  })
 })
