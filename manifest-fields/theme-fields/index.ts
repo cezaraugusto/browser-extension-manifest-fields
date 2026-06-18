@@ -16,13 +16,25 @@ export function themeFields (context: string, manifest: Manifest): ThemeFields {
 
   const out: Record<string, string> = {}
 
-  for (const [_, value] of Object.entries(images)) {
-    if (typeof value !== 'string' || !value) continue
+  const addImage = (value: unknown): void => {
+    if (typeof value !== 'string' || !value) return
 
     const resolved = resolveManifestPath(context, value)
     const basename = require('path').basename(value)
 
     out[`theme/images/${basename}`] = resolved
+  }
+
+  for (const [_, value] of Object.entries(images)) {
+    // `theme.images` values are usually a single path string (e.g.
+    // `theme_frame`), but `additional_backgrounds` is an array of paths , a
+    // theme can layer multiple backgrounds. Collect every entry so each
+    // background image is emitted, not just single-string fields.
+    if (Array.isArray(value)) {
+      for (const entry of value) addImage(entry)
+    } else {
+      addImage(value)
+    }
   }
 
   return Object.keys(out).length ? out : undefined
