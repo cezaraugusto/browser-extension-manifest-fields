@@ -77,12 +77,12 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@rslib/core": "^0.3.0",
-    "@types/node": "^22.10.1",
+    "@rslib/core": "^0.23.0",
+    "@types/node": "^25.9.3",
     "eslint": "^10.5.0",
-    "eslint-config-auditor": "^2.0.0",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.0"
+    "eslint-config-auditor": "^2.3.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
   },
   "pnpm": {
     "overrides": {
