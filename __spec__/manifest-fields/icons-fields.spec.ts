@@ -41,9 +41,14 @@ describe('icons field resolvers', () => {
       path.join(ctx, 'public/16.png'),
       path.join(ctx, 'public/32.png')
     ])
+    // The input manifest must not be mutated in place.
+    expect(m2.browser_action.default_icon).toEqual({
+      16: 'public/16.png',
+      32: '/public/32.png'
+    })
   })
 
-  it('converts theme icons and removes size', () => {
+  it('converts theme icons and removes size without mutating the manifest', () => {
     const m: any = {
       browser_action: {
         theme_icons: [
@@ -60,6 +65,19 @@ describe('icons field resolvers', () => {
     // @ts-expect-error removed at runtime
     expect(res[0].size).toBeUndefined()
     expect(res[1].light).toBe(path.join(ctx, 'public/l2.png'))
+
+    // Input untouched: original paths and `size` preserved on the manifest.
+    expect(m.browser_action.theme_icons[0]).toEqual({
+      light: 'public/l.png',
+      dark: 'public/d.png',
+      size: 16
+    })
+  })
+
+  it('returns undefined for a non-array theme_icons value', () => {
+    const m: any = {browser_action: {theme_icons: 'oops'}}
+
+    expect(browserActionThemeIcons(ctx, m)).toBeUndefined()
   })
 
   it('maps icons object to list of absolute paths', () => {

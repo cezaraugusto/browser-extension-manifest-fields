@@ -17,17 +17,25 @@ export function browserActionThemeIcons (
     return undefined
   }
 
-  for (const themeIcon of manifest.browser_action.theme_icons as ThemeIcon[]) {
-    if (themeIcon.light) {
-      themeIcon.light = resolveManifestPath(context, themeIcon.light)
+  const themeIcons = manifest.browser_action.theme_icons
+
+  if (!Array.isArray(themeIcons)) return undefined
+
+  // Return resolved copies without mutating the manifest in place; `size` is
+  // dropped from the output (same as before) but the input object is untouched.
+  return (themeIcons as ThemeIcon[]).map((themeIcon) => {
+    const resolved: ThemeIcon = {...themeIcon}
+
+    if (resolved.light) {
+      resolved.light = resolveManifestPath(context, resolved.light)
     }
 
-    if (themeIcon.dark) {
-      themeIcon.dark = resolveManifestPath(context, themeIcon.dark)
+    if (resolved.dark) {
+      resolved.dark = resolveManifestPath(context, resolved.dark)
     }
 
-    if (themeIcon.size) delete themeIcon.size
-  }
+    if (resolved.size !== undefined) delete resolved.size
 
-  return manifest.browser_action.theme_icons
+    return resolved
+  })
 }

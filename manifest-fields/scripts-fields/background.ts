@@ -12,7 +12,9 @@ export function backgroundScripts (
 
   const {scripts} = manifest.background
 
-  if (scripts) {
+  // `background.scripts` is spec'd as an array; guard so a malformed
+  // (non-array) value is ignored instead of throwing `.map is not a function`.
+  if (Array.isArray(scripts)) {
     return scripts.map((script: string) => {
       return resolveManifestPath(context, script)
     })

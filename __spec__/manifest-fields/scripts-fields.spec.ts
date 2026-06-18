@@ -20,6 +20,12 @@ describe('scripts field resolvers', () => {
     ])
   })
 
+  it('ignores a non-array background.scripts instead of throwing', () => {
+    const m: any = {background: {scripts: 'bg.js'}}
+
+    expect(backgroundScripts(ctx, m)).toBeUndefined()
+  })
+
   it('service worker resolves to absolute path', () => {
     const m: any = {background: {service_worker: 'sw.js'}}
 
