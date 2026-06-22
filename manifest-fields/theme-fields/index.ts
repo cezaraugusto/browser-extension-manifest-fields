@@ -27,7 +27,7 @@ export function themeFields (context: string, manifest: Manifest): ThemeFields {
 
   for (const [_, value] of Object.entries(images)) {
     // `theme.images` values are usually a single path string (e.g.
-    // `theme_frame`), but `additional_backgrounds` is an array of paths , a
+    // `theme_frame`), but `additional_backgrounds` is an array of paths; a
     // theme can layer multiple backgrounds. Collect every entry so each
     // background image is emitted, not just single-string fields.
     if (Array.isArray(value)) {
