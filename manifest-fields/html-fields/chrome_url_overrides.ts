@@ -11,8 +11,8 @@ export function chromeUrlOverrides (
     return {'chrome_url_overrides/newtab': undefined}
   }
 
-  // An extension may override more than one of newtab/bookmarks/history at once
-  // , they are independent keys. Accumulate every declared override instead of
+  // An extension may override more than one of newtab/bookmarks/history at once;
+  // they are independent keys. Accumulate every declared override instead of
   // reassigning the result, otherwise only the last-declared page survives and
   // the others never get built/emitted.
   const chromeUrlOverride: Record<string, any> = {}
