@@ -4,10 +4,12 @@
 [npm-downloads-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
 [action-image]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions/workflows/ci.yml/badge.svg?branch=main
 [action-url]: https://github.com/cezaraugusto/browser-extension-manifest-fields/actions
+[provenance-image]: https://img.shields.io/badge/provenance-verified-0971fe?logo=npm&logoColor=white
+[provenance-url]: https://www.npmjs.com/package/browser-extension-manifest-fields
 
 > Parse and resolve browser extension manifest fields to absolute paths.
 
-# browser-extension-manifest-fields [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url]
+# browser-extension-manifest-fields [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url] [![provenance][provenance-image]][provenance-url]
 
 Parse a `manifest.json` and resolve file paths for HTML, icons, JSON, scripts, locales, and web-accessible resources. It also surfaces theme image paths and semantic fields used for restart-required decisions.
 
