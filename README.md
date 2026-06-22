@@ -9,7 +9,13 @@
 
 # browser-extension-manifest-fields [![Version][npm-version-image]][npm-version-url] [![Downloads][npm-downloads-image]][npm-downloads-url] [![workflow][action-image]][action-url]
 
-Parse a `manifest.json` and resolve file paths for HTML, icons, JSON, scripts, locales, web accessible resources; also surface theme image paths and semantic fields used for restart-required decisions.
+Parse a `manifest.json` and resolve file paths for HTML, icons, JSON, scripts, locales, and web-accessible resources. It also surfaces theme image paths and semantic fields used for restart-required decisions.
+
+## Installation
+
+```bash
+npm i browser-extension-manifest-fields
+```
 
 ## What it does
 
