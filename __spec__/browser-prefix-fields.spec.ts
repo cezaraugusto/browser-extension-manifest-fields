@@ -54,6 +54,12 @@ describe('filterKeysForThisBrowser', () => {
     ).toEqual(['tabs'])
   })
 
+  it('treats firefox-based as a gecko target', () => {
+    expect(
+      filterKeysForThisBrowser(manifest, 'firefox-based').permissions
+    ).toEqual(['tabs'])
+  })
+
   it('keeps unprefixed keys and does not mutate the input', () => {
     const result = filterKeysForThisBrowser(manifest, 'chrome')
 

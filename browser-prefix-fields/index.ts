@@ -1,9 +1,5 @@
 type Manifest = Record<string, any>
 
-/**
- * Browser targets understood by {@link filterKeysForThisBrowser}.
- * Any other string is accepted and matched against its own prefix only.
- */
 export type BrowserTarget =
   | 'chrome' |
   'edge' |
@@ -19,14 +15,6 @@ export type BrowserTarget =
 const CHROMIUM_BASED_BROWSERS = ['chrome', 'edge']
 const GECKO_BASED_BROWSERS = ['firefox']
 
-/**
- * Resolve vendor-prefixed manifest keys (e.g. `"firefox:background"`,
- * `"chromium:permissions"`) for a given browser target.
- *
- * Keys prefixed with the target browser (or its engine family) replace the
- * unprefixed key; prefixed keys for other browsers are dropped. The input
- * manifest is not mutated.
- */
 export function filterKeysForThisBrowser (
   manifest: Manifest,
   browser: BrowserTarget
@@ -41,7 +29,9 @@ export function filterKeysForThisBrowser (
     String(browser).includes('webkit')
 
   const isGeckoTarget =
-    GECKO_BASED_BROWSERS.includes(browser) || String(browser).includes('gecko')
+    GECKO_BASED_BROWSERS.includes(browser) ||
+    String(browser).includes('gecko') ||
+    String(browser).includes('firefox')
 
   const chromiumPrefixes = new Set(['chromium', 'chrome', 'edge'])
   const geckoPrefixes = new Set(['gecko', 'firefox'])
