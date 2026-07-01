@@ -60,6 +60,26 @@ describe('filterKeysForThisBrowser', () => {
     ).toEqual(['tabs'])
   })
 
+  it('resolves chromium keys for chromium forks (brave/opera/vivaldi/yandex)', () => {
+    for (const browser of ['brave', 'opera', 'vivaldi', 'yandex']) {
+      const result = filterKeysForThisBrowser(manifest, browser)
+      expect(result.permissions).toEqual(['storage'])
+      expect(result.short_name).toBe('EdgeTest')
+      expect(result.browser_specific_settings).toBeUndefined()
+    }
+  })
+
+  it('resolves gecko keys for gecko forks (waterfox/librewolf)', () => {
+    for (const browser of ['waterfox', 'librewolf']) {
+      const result = filterKeysForThisBrowser(manifest, browser)
+      expect(result.permissions).toEqual(['tabs'])
+      expect(result.browser_specific_settings).toEqual({
+        gecko: {id: 'test@test'}
+      })
+      expect(result.short_name).toBeUndefined()
+    }
+  })
+
   it('keeps unprefixed keys and does not mutate the input', () => {
     const result = filterKeysForThisBrowser(manifest, 'chrome')
 

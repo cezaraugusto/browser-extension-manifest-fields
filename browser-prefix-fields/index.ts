@@ -3,7 +3,13 @@ type Manifest = Record<string, any>
 export type BrowserTarget =
   | 'chrome' |
   'edge' |
+  'brave' |
+  'opera' |
+  'vivaldi' |
+  'yandex' |
   'firefox' |
+  'waterfox' |
+  'librewolf' |
   'chromium' |
   'chromium-based' |
   'gecko-based' |
@@ -12,8 +18,11 @@ export type BrowserTarget =
   'webkit-based' |
   (string & {})
 
-const CHROMIUM_BASED_BROWSERS = ['chrome', 'edge']
-const GECKO_BASED_BROWSERS = ['firefox']
+// Engine-family classification. Fork browsers inherit their family's
+// chrome:/firefox: scoped manifest keys; the generic '*-based'/'chromium'/
+// 'gecko' aliases are matched by substring below.
+const CHROMIUM_BASED_BROWSERS = ['chrome', 'edge', 'brave', 'opera', 'vivaldi', 'yandex']
+const GECKO_BASED_BROWSERS = ['firefox', 'waterfox', 'librewolf']
 
 export function filterKeysForThisBrowser (
   manifest: Manifest,
