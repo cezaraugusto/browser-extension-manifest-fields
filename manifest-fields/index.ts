@@ -31,7 +31,12 @@ export function getManifestFieldsData ({
   browser?: string;
 }) {
   const context = path.dirname(manifestPath)
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  // Chrome tolerates a UTF-8 BOM in manifest.json (verified against live
+  // Chrome), so strip it before parsing instead of throwing
+  const rawManifest = fs.readFileSync(manifestPath, 'utf8')
+  const manifest = JSON.parse(
+    rawManifest.charCodeAt(0) === 0xfeff ? rawManifest.slice(1) : rawManifest
+  )
   const manifestNoPrefixes = filterKeysForThisBrowser(
     manifest,
     browser || 'chrome'

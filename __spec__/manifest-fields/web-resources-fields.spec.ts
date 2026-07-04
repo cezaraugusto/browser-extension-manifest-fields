@@ -60,3 +60,21 @@ describe('getManifestFieldsData', () => {
     )
   })
 })
+
+describe('getManifestFieldsData BOM tolerance', () => {
+  it('parses a manifest with a UTF-8 BOM, as Chrome does', () => {
+    const tmp = path.join(__dirname, '.tmp-manifest-bom')
+    fs.mkdirSync(tmp, {recursive: true})
+    const manifestPath = path.join(tmp, 'manifest.json')
+    fs.writeFileSync(
+      manifestPath,
+      '﻿' + JSON.stringify({action: {default_popup: 'p.html'}}),
+      'utf8'
+    )
+
+    const res = getManifestFieldsData({manifestPath, browser: 'chrome'} as any)
+    expect(res.html['action/index']).toBe(
+      path.join(path.dirname(manifestPath), 'p.html')
+    )
+  })
+})
