@@ -95,4 +95,54 @@ describe('special folders helpers', () => {
     // No entry for .txt
     expect(Object.keys(res.scripts).some((k) => k.endsWith('/c'))).toBe(false)
   })
+
+  // Regression: keying scripts/ by basename made scripts/a/inject.js and
+  // scripts/b/inject.js one entry, and the last file scanned silently replaced
+  // the other. One file shipped and both manifest references pointed nowhere.
+  it('getSpecialFoldersData keeps nested scripts/ paths distinct', () => {
+    const project = tmp
+
+    makeTree(project, [
+      'scripts/a/inject.js',
+      'scripts/b/inject.js',
+      'scripts/inject.js',
+      'scripts/deep/nested/tool.ts'
+    ])
+    const manifestPath = path.join(project, 'manifest.json')
+
+    fs.writeFileSync(manifestPath, '{}', 'utf8')
+    const res = getSpecialFoldersData({manifestPath} as any)
+
+    expect(res.scripts['scripts/a/inject']).toBe(
+      path.join(project, 'scripts/a/inject.js')
+    )
+    expect(res.scripts['scripts/b/inject']).toBe(
+      path.join(project, 'scripts/b/inject.js')
+    )
+    expect(res.scripts['scripts/inject']).toBe(
+      path.join(project, 'scripts/inject.js')
+    )
+    expect(res.scripts['scripts/deep/nested/tool']).toBe(
+      path.join(project, 'scripts/deep/nested/tool.ts')
+    )
+    expect(Object.keys(res.scripts)).toHaveLength(4)
+  })
+
+  // A script named index.js is a file, not a route: only pages/ collapses it.
+  it('getSpecialFoldersData never collapses a nested scripts/ index', () => {
+    const project = tmp
+
+    makeTree(project, ['scripts/worker/index.js', 'pages/blog/index.html'])
+    const manifestPath = path.join(project, 'manifest.json')
+
+    fs.writeFileSync(manifestPath, '{}', 'utf8')
+    const res = getSpecialFoldersData({manifestPath} as any)
+
+    expect(res.scripts['scripts/worker/index']).toBe(
+      path.join(project, 'scripts/worker/index.js')
+    )
+    expect(res.pages['pages/blog']).toBe(
+      path.join(project, 'pages/blog/index.html')
+    )
+  })
 })

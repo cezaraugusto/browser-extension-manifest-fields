@@ -42,18 +42,21 @@ export function generateEntries (
   return includes.reduce((acc, include) => {
     const extname = path.extname(include)
 
-    // Special handling for pages/: preserve nested path and collapse "/index"
-    if (folderName === 'pages') {
-      const pagesRoot = path.join(projectPath, folderName)
-      // Relative path inside pages/, normalized to unix style
-      const rel = path.relative(pagesRoot, include).split(path.sep).join('/')
+    // pages/ and scripts/ both keep their nesting: keying by basename alone
+    // makes scripts/a/inject.js and scripts/b/inject.js the same entry, and
+    // the last one scanned silently replaces the other.
+    if (folderName === 'pages' || folderName === 'scripts') {
+      const folderRoot = path.join(projectPath, folderName)
+      // Relative path inside the folder, normalized to unix style
+      const rel = path.relative(folderRoot, include).split(path.sep).join('/')
 
       // Strip extension
       let relNoExt = rel.slice(0, -extname.length)
 
-      // Collapse nested "/index" -> its parent.
+      // Collapse nested "/index" -> its parent, a pages/ routing convention.
+      // A script named index.js is a file, not a route, so it keeps its name.
       // Root "index" remains "index"
-      if (relNoExt.endsWith('/index')) {
+      if (folderName === 'pages' && relNoExt.endsWith('/index')) {
         relNoExt = relNoExt.slice(0, -'/index'.length)
       }
 
@@ -66,7 +69,7 @@ export function generateEntries (
       return {...acc, [key]: include}
     }
 
-    // Default behavior (public/, scripts/, etc...)
+    // Default behavior (public/, etc...)
     const filename = path.basename(include, extname)
     const key = folderName
       ? `${folderName}/${filename}`
