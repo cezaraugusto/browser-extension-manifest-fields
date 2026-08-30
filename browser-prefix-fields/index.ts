@@ -28,14 +28,18 @@ export function filterKeysForThisBrowser (
   manifest: Manifest,
   browser: BrowserTarget
 ): Manifest {
-  const isChromiumTarget =
-    CHROMIUM_BASED_BROWSERS.includes(browser) ||
-    String(browser).includes('chromium') ||
-    // Safari ships an MV3, chromium-shaped bundle, so it should pick up
-    // chromium/chrome-prefixed manifest keys.
+  // Safari/webkit are not chromium-based for launch classification, but for
+  // MANIFEST keys they inherit the chromium family or prefixed keys resolve
+  // to nothing.
+  const isSafariTarget =
     browser === 'safari' ||
     browser === 'webkit-based' ||
     String(browser).includes('webkit')
+
+  const isChromiumTarget =
+    CHROMIUM_BASED_BROWSERS.includes(browser) ||
+    String(browser).includes('chromium') ||
+    isSafariTarget
 
   const isGeckoTarget =
     GECKO_BASED_BROWSERS.includes(browser) ||
@@ -44,25 +48,62 @@ export function filterKeysForThisBrowser (
 
   const chromiumPrefixes = new Set(['chromium', 'chrome', 'edge'])
   const geckoPrefixes = new Set(['gecko', 'firefox'])
+  // safari:/webkit: keys are the most specific ones a safari target has, and
+  // must win over the chromium-family keys it also inherits. Matching them
+  // only through `prefix === browser` dropped `webkit:` on a `safari` build
+  // entirely, so the key vanished instead of resolving.
+  const webkitPrefixes = new Set(['safari', 'webkit'])
 
-  const patchedManifest = JSON.parse(
-    JSON.stringify(manifest),
-    function reviver (this: any, key: string, value: any) {
-      const indexOfColon = key.indexOf(':')
+  const isFamilyPrefix = (prefix: string): boolean =>
+    (isChromiumTarget && chromiumPrefixes.has(prefix)) ||
+    (isGeckoTarget && geckoPrefixes.has(prefix))
 
-      if (indexOfColon === -1) return value
+  const isSpecificPrefix = (prefix: string): boolean =>
+    prefix === browser || (isSafariTarget && webkitPrefixes.has(prefix))
 
-      const prefix = key.substring(0, indexOfColon)
+  // A JSON.parse reviver assigns as it walks, so two matching prefixes for one
+  // key resolved in SOURCE ORDER and the last one in the file won: `chrome:`
+  // beat `chromium:` or lost to it depending only on where it sat. Collect the
+  // candidates per object instead and apply a fixed precedence.
+  const resolve = (node: unknown): unknown => {
+    if (Array.isArray(node)) return node.map((item) => resolve(item))
 
-      if (
-        prefix === browser ||
-        (isChromiumTarget && chromiumPrefixes.has(prefix)) ||
-        (isGeckoTarget && geckoPrefixes.has(prefix))
-      ) {
-        this[key.substring(indexOfColon + 1)] = value
+    if (node && typeof node === 'object') {
+      const result: Record<string, unknown> = {}
+      const familyMatches: Record<string, unknown> = {}
+      const specificMatches: Record<string, unknown> = {}
+
+      for (const [key, value] of Object.entries(node)) {
+        const indexOfColon = key.indexOf(':')
+
+        if (indexOfColon === -1) {
+          result[key] = resolve(value)
+          continue
+        }
+
+        const prefix = key.substring(0, indexOfColon)
+        const strippedKey = key.substring(indexOfColon + 1)
+
+        if (isSpecificPrefix(prefix)) {
+          specificMatches[strippedKey] = resolve(value)
+        } else if (isFamilyPrefix(prefix)) {
+          familyMatches[strippedKey] = resolve(value)
+        }
       }
-    }
-  )
 
-  return patchedManifest
+      // Precedence (deterministic): plain < family prefix < specific prefix.
+      for (const [strippedKey, value] of Object.entries(familyMatches)) {
+        result[strippedKey] = value
+      }
+      for (const [strippedKey, value] of Object.entries(specificMatches)) {
+        result[strippedKey] = value
+      }
+
+      return result
+    }
+
+    return node
+  }
+
+  return resolve(manifest) as Manifest
 }
