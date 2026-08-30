@@ -89,3 +89,79 @@ describe('filterKeysForThisBrowser', () => {
     expect((manifest as Record<string, unknown>).permissions).toBeUndefined()
   })
 })
+
+describe('filterKeysForThisBrowser precedence', () => {
+  const both = {
+    'chrome:devtools_page': 'devtools/chrome.html',
+    'chromium:devtools_page': 'devtools/family.html'
+  }
+
+  it('prefers the specific browser key over its family, whatever the order', () => {
+    expect(filterKeysForThisBrowser(both, 'chrome').devtools_page).toBe(
+      'devtools/chrome.html'
+    )
+
+    const swapped = {
+      'chromium:devtools_page': 'devtools/family.html',
+      'chrome:devtools_page': 'devtools/chrome.html'
+    }
+    expect(filterKeysForThisBrowser(swapped, 'chrome')).toEqual(
+      filterKeysForThisBrowser(both, 'chrome')
+    )
+  })
+
+  it('applies the same rule on the gecko side', () => {
+    const gecko = {
+      'gecko:devtools_page': 'devtools/family.html',
+      'firefox:devtools_page': 'devtools/firefox.html'
+    }
+    expect(filterKeysForThisBrowser(gecko, 'firefox').devtools_page).toBe(
+      'devtools/firefox.html'
+    )
+  })
+
+  it('resolves a webkit-prefixed key for safari instead of dropping it', () => {
+    const webkit = {'webkit:devtools_page': 'devtools/safari.html'}
+    expect(filterKeysForThisBrowser(webkit, 'safari').devtools_page).toBe(
+      'devtools/safari.html'
+    )
+    expect(filterKeysForThisBrowser(webkit, 'webkit-based').devtools_page).toBe(
+      'devtools/safari.html'
+    )
+  })
+
+  it('lets a webkit key beat the chromium family safari also inherits', () => {
+    const mixed = {
+      'webkit:devtools_page': 'devtools/safari.html',
+      'chromium:devtools_page': 'devtools/family.html'
+    }
+    expect(filterKeysForThisBrowser(mixed, 'safari').devtools_page).toBe(
+      'devtools/safari.html'
+    )
+  })
+
+  it('leaves a plain-key manifest byte identical', () => {
+    const plain = {manifest_version: 3, name: 'Test', devtools_page: 'a.html'}
+    expect(JSON.stringify(filterKeysForThisBrowser(plain, 'chrome'))).toBe(
+      JSON.stringify(plain)
+    )
+  })
+
+  it('keeps a family key covering that family fork browsers', () => {
+    const family = {'chromium:short_name': 'Fam'}
+    expect(filterKeysForThisBrowser(family, 'brave').short_name).toBe('Fam')
+    expect(filterKeysForThisBrowser(family, 'edge').short_name).toBe('Fam')
+    const gecko = {'gecko:short_name': 'Fam'}
+    expect(filterKeysForThisBrowser(gecko, 'waterfox').short_name).toBe('Fam')
+  })
+
+  it('resolves prefixed keys nested inside objects and arrays', () => {
+    const nested = {
+      content_scripts: [
+        {'chrome:js': ['a.js'], 'chromium:js': ['b.js'], matches: ['<all_urls>']}
+      ]
+    }
+    const out = filterKeysForThisBrowser(nested, 'chrome') as any
+    expect(out.content_scripts[0].js).toEqual(['a.js'])
+  })
+})
