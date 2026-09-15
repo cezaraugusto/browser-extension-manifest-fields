@@ -309,3 +309,40 @@ describe('filterKeysForThisBrowser gecko prefixes', () => {
     expect(filterKeysForThisBrowser(gecko, 'firefox').description).toBe('Fx')
   })
 })
+
+const ownValue = (target: object, key: string): unknown =>
+  Object.getOwnPropertyDescriptor(target, key)?.value
+
+describe('filterKeysForThisBrowser own properties', () => {
+  it('keeps a plain __proto__ key as an own property', () => {
+    const withProto = JSON.parse('{"name":"x","__proto__":{"polluted":true}}')
+    const result = filterKeysForThisBrowser(withProto, 'firefox')
+
+    expect(Object.prototype.hasOwnProperty.call(result, '__proto__')).toBe(true)
+    expect(ownValue(result, '__proto__')).toEqual({polluted: true})
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+    expect((result as {polluted?: boolean}).polluted).toBeUndefined()
+  })
+
+  it('resolves a prefixed __proto__ key by precedence', () => {
+    const prefixed = JSON.parse(
+      '{"__proto__":{"plain":true},"chromium:__proto__":{"family":true}}'
+    )
+
+    const onChrome = filterKeysForThisBrowser(prefixed, 'chrome')
+    const onFirefox = filterKeysForThisBrowser(prefixed, 'firefox')
+
+    expect(ownValue(onChrome, '__proto__')).toEqual({family: true})
+    expect(ownValue(onFirefox, '__proto__')).toEqual({plain: true})
+    expect(Object.getPrototypeOf(onChrome)).toBe(Object.prototype)
+  })
+
+  it('keeps __proto__ own inside nested objects', () => {
+    const nested = JSON.parse('{"background":{"__proto__":{"deep":true}}}')
+    const result = filterKeysForThisBrowser(nested, 'edge')
+    const background = result.background as object
+
+    expect(ownValue(background, '__proto__')).toEqual({deep: true})
+    expect(Object.getPrototypeOf(background)).toBe(Object.prototype)
+  })
+})

@@ -73,15 +73,17 @@ export function filterKeysForThisBrowser (
     if (Array.isArray(node)) return node.map((item) => resolve(item))
 
     if (node && typeof node === 'object') {
-      const result: Record<string, unknown> = {}
-      const familyMatches: Record<string, unknown> = {}
-      const specificMatches: Record<string, unknown> = {}
+      // Maps, not plain objects: a manifest key named __proto__ assigned on
+      // a plain object sets its prototype instead of a key and vanishes.
+      const result = new Map<string, unknown>()
+      const familyMatches = new Map<string, unknown>()
+      const specificMatches = new Map<string, unknown>()
 
       for (const [key, value] of Object.entries(node)) {
         const indexOfColon = key.indexOf(':')
 
         if (indexOfColon === -1) {
-          result[key] = resolve(value)
+          result.set(key, resolve(value))
           continue
         }
 
@@ -89,21 +91,22 @@ export function filterKeysForThisBrowser (
         const strippedKey = key.substring(indexOfColon + 1)
 
         if (isSpecificPrefix(prefix)) {
-          specificMatches[strippedKey] = resolve(value)
+          specificMatches.set(strippedKey, resolve(value))
         } else if (isFamilyPrefix(prefix)) {
-          familyMatches[strippedKey] = resolve(value)
+          familyMatches.set(strippedKey, resolve(value))
         }
       }
 
       // Precedence (deterministic): plain < family prefix < specific prefix.
-      for (const [strippedKey, value] of Object.entries(familyMatches)) {
-        result[strippedKey] = value
+      for (const [strippedKey, value] of familyMatches) {
+        result.set(strippedKey, value)
       }
-      for (const [strippedKey, value] of Object.entries(specificMatches)) {
-        result[strippedKey] = value
+      for (const [strippedKey, value] of specificMatches) {
+        result.set(strippedKey, value)
       }
 
-      return result
+      // fromEntries defines own data properties, so __proto__ stays a key.
+      return Object.fromEntries(result)
     }
 
     return node
