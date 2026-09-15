@@ -23,6 +23,10 @@ npm i browser-extension-manifest-fields
 
 - HTML, icons, JSON, and scripts declared in the manifest are resolved to absolute file system paths, with public-root inputs normalized (e.g., `/something`, `/public/something`, `public/something`).
 - Browser-prefixed manifest keys are honored using the current target browser (e.g., `chromium:action` for Chrome vs `gecko:action` for Firefox/Gecko).
+  - `chromium:` reaches every Chromium-family target (Chrome, Edge, forks such as Brave, and Safari). `gecko:` reaches every Gecko-family target.
+  - `chrome:` applies only to a `chrome` build and `edge:` only to an `edge` build. A fork keeps its own name prefix (`brave:`), and Safari also takes `safari:` and `webkit:`.
+  - Precedence is fixed: the browser's own prefix beats its family prefix, which beats the plain key, whatever the order in the file.
+  - Up to 2.3.1, `chrome:` and `edge:` reached the whole Chromium family. Rename those keys to `chromium:` to keep that reach.
 - `content_scripts` entries include both JS and CSS assets when present, preserving ordering.
 - `web_accessible_resources` are passed through as-is for MV3, or strings for MV2.
 - Locales under `_locales/*` are discovered if present.

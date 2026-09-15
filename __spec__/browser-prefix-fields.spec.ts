@@ -64,7 +64,7 @@ describe('filterKeysForThisBrowser', () => {
     for (const browser of ['brave', 'opera', 'vivaldi', 'yandex']) {
       const result = filterKeysForThisBrowser(manifest, browser)
       expect(result.permissions).toEqual(['storage'])
-      expect(result.short_name).toBe('EdgeTest')
+      expect(result.short_name).toBeUndefined()
       expect(result.browser_specific_settings).toBeUndefined()
     }
   })
@@ -163,5 +163,149 @@ describe('filterKeysForThisBrowser precedence', () => {
     }
     const out = filterKeysForThisBrowser(nested, 'chrome') as any
     expect(out.content_scripts[0].js).toEqual(['a.js'])
+  })
+})
+
+type NestedScripts = {content_scripts: Array<{js?: string[]}>}
+
+const storeKey = {
+  manifest_version: 3,
+  name: 'Lyrics',
+  'chrome:key': 'MIIBIjANBgkq'
+}
+
+describe('filterKeysForThisBrowser vendor-exact chrome: and edge:', () => {
+  it('keeps a chrome:key on chrome and drops it on edge', () => {
+    const onChrome = filterKeysForThisBrowser(storeKey, 'chrome')
+    const onEdge = filterKeysForThisBrowser(storeKey, 'edge')
+
+    expect(onChrome.key).toBe('MIIBIjANBgkq')
+    expect(onEdge.key).toBeUndefined()
+    expect(onEdge['chrome:key']).toBeUndefined()
+  })
+
+  it('keeps an edge: key on edge only', () => {
+    const edgeOnly = {'edge:short_name': 'EdgeOnly'}
+    const others = ['chrome', 'chromium', 'chromium-based', 'brave', 'safari']
+    const onEdge = filterKeysForThisBrowser(edgeOnly, 'edge')
+
+    expect(onEdge.short_name).toBe('EdgeOnly')
+
+    for (const browser of others) {
+      const result = filterKeysForThisBrowser(edgeOnly, browser)
+
+      expect(result.short_name).toBeUndefined()
+    }
+  })
+
+  it('reaches no fork, chromium target, safari or gecko build', () => {
+    const targets = [
+      'brave',
+      'opera',
+      'vivaldi',
+      'yandex',
+      'chromium',
+      'chromium-based',
+      'safari',
+      'webkit-based',
+      'firefox',
+      'gecko-based'
+    ]
+
+    for (const browser of targets) {
+      const result = filterKeysForThisBrowser(storeKey, browser)
+
+      expect(result.key).toBeUndefined()
+    }
+  })
+})
+
+describe('filterKeysForThisBrowser vendor keys in nested objects', () => {
+  it('resolves the family key in a nested object on edge', () => {
+    const nested = {
+      content_scripts: [{'chrome:js': ['a.js'], 'chromium:js': ['b.js']}]
+    }
+
+    const onEdge = filterKeysForThisBrowser(nested, 'edge') as NestedScripts
+
+    expect(onEdge.content_scripts[0].js).toEqual(['b.js'])
+  })
+
+  it('lets a fork keep its own name prefix', () => {
+    const fork = {'brave:short_name': 'Brave', 'chromium:short_name': 'Fam'}
+
+    expect(filterKeysForThisBrowser(fork, 'brave').short_name).toBe('Brave')
+    expect(filterKeysForThisBrowser(fork, 'opera').short_name).toBe('Fam')
+  })
+
+  it('gives safari chromium: and webkit: keys, not chrome: or edge:', () => {
+    const mixed = {
+      'chromium:permissions': ['storage'],
+      'chrome:short_name': 'Chrome',
+      'edge:description': 'Edge',
+      'webkit:homepage_url': 'https://example.com'
+    }
+
+    const result = filterKeysForThisBrowser(mixed, 'safari')
+
+    expect(result.permissions).toEqual(['storage'])
+    expect(result.short_name).toBeUndefined()
+    expect(result.description).toBeUndefined()
+    expect(result.homepage_url).toBe('https://example.com')
+  })
+})
+
+describe('filterKeysForThisBrowser precedence per target', () => {
+  it('treats chromium: as the most specific prefix on chromium', () => {
+    const chromium = {
+      short_name: 'Plain',
+      'chromium:short_name': 'Chromium',
+      'chrome:short_name': 'Chrome'
+    }
+
+    const withBrave = {
+      'chromium:short_name': 'Chromium',
+      'brave:short_name': 'Brave'
+    }
+
+    const plain = filterKeysForThisBrowser(chromium, 'chromium')
+    const fork = filterKeysForThisBrowser(withBrave, 'chromium')
+
+    expect(plain.short_name).toBe('Chromium')
+    expect(fork.short_name).toBe('Chromium')
+  })
+
+  it('orders vendor over family over plain whatever the order', () => {
+    const [plain, family, vendor]: Array<[string, string]> = [
+      ['short_name', 'Plain'],
+      ['chromium:short_name', 'Fam'],
+      ['edge:short_name', 'Edge']
+    ]
+
+    const orders = [
+      [plain, family, vendor],
+      [vendor, family, plain],
+      [family, plain, vendor],
+      [vendor, plain, family]
+    ]
+
+    for (const order of orders) {
+      const shuffled = Object.fromEntries(order)
+
+      expect(filterKeysForThisBrowser(shuffled, 'edge').short_name).toBe('Edge')
+      expect(filterKeysForThisBrowser(shuffled, 'chrome').short_name).toBe('Fam')
+      expect(filterKeysForThisBrowser(shuffled, 'safari').short_name).toBe('Fam')
+    }
+  })
+})
+
+describe('filterKeysForThisBrowser gecko prefixes', () => {
+  it('leaves the gecko prefixes as they were', () => {
+    const gecko = {'gecko:short_name': 'Fam', 'firefox:description': 'Fx'}
+    const onWaterfox = filterKeysForThisBrowser(gecko, 'waterfox')
+
+    expect(onWaterfox.short_name).toBe('Fam')
+    expect(onWaterfox.description).toBe('Fx')
+    expect(filterKeysForThisBrowser(gecko, 'firefox').description).toBe('Fx')
   })
 })

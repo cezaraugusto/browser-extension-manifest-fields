@@ -19,8 +19,8 @@ export type BrowserTarget =
   (string & {})
 
 // Engine-family classification. Fork browsers inherit their family's
-// chrome:/firefox: scoped manifest keys; the generic '*-based'/'chromium'/
-// 'gecko' aliases are matched by substring below.
+// chromium:/gecko:/firefox: scoped manifest keys; the generic
+// '*-based'/'chromium'/'gecko' aliases are matched by substring below.
 const CHROMIUM_BASED_BROWSERS = ['chrome', 'edge', 'brave', 'opera', 'vivaldi', 'yandex']
 const GECKO_BASED_BROWSERS = ['firefox', 'waterfox', 'librewolf']
 
@@ -46,7 +46,10 @@ export function filterKeysForThisBrowser (
     String(browser).includes('gecko') ||
     String(browser).includes('firefox')
 
-  const chromiumPrefixes = new Set(['chromium', 'chrome', 'edge'])
+  // chromium: is the only Chromium family prefix. chrome: and edge: name one
+  // vendor and match through `prefix === browser` alone, so a Chrome Web Store
+  // `chrome:key` never reaches an Edge build.
+  const chromiumPrefixes = new Set(['chromium'])
   const geckoPrefixes = new Set(['gecko', 'firefox'])
   // safari:/webkit: keys are the most specific ones a safari target has, and
   // must win over the chromium-family keys it also inherits. Matching them
@@ -64,7 +67,8 @@ export function filterKeysForThisBrowser (
   // A JSON.parse reviver assigns as it walks, so two matching prefixes for one
   // key resolved in SOURCE ORDER and the last one in the file won: `chrome:`
   // beat `chromium:` or lost to it depending only on where it sat. Collect the
-  // candidates per object instead and apply a fixed precedence.
+  // candidates per object instead and apply a fixed precedence. Two sibling
+  // family prefixes (gecko: and firefox: on waterfox) keep source order.
   const resolve = (node: unknown): unknown => {
     if (Array.isArray(node)) return node.map((item) => resolve(item))
 
