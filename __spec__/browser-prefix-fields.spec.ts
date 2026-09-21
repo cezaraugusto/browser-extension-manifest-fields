@@ -69,14 +69,29 @@ describe('filterKeysForThisBrowser', () => {
     }
   })
 
-  it('resolves gecko keys for gecko forks (waterfox/librewolf)', () => {
-    for (const browser of ['waterfox', 'librewolf']) {
+  it('resolves gecko keys for gecko forks (waterfox/librewolf/zen/floorp)', () => {
+    for (const browser of ['waterfox', 'librewolf', 'zen', 'floorp']) {
       const result = filterKeysForThisBrowser(manifest, browser)
       expect(result.permissions).toEqual(['tabs'])
       expect(result.browser_specific_settings).toEqual({
         gecko: {id: 'test@test'}
       })
       expect(result.short_name).toBeUndefined()
+    }
+  })
+
+  it('every gecko fork resolves a manifest identically to firefox', () => {
+    const onFirefox = filterKeysForThisBrowser(manifest, 'firefox')
+    for (const browser of ['waterfox', 'librewolf', 'zen', 'floorp']) {
+      expect(filterKeysForThisBrowser(manifest, browser)).toEqual(onFirefox)
+    }
+  })
+
+  it('a gecko fork never falls through to an empty family', () => {
+    for (const browser of ['waterfox', 'librewolf', 'zen', 'floorp']) {
+      const result = filterKeysForThisBrowser(manifest, browser)
+      expect(result.browser_specific_settings).toBeDefined()
+      expect(Object.keys(result).length).toBeGreaterThan(0)
     }
   })
 

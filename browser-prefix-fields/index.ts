@@ -10,6 +10,8 @@ export type BrowserTarget =
   'firefox' |
   'waterfox' |
   'librewolf' |
+  'zen' |
+  'floorp' |
   'chromium' |
   'chromium-based' |
   'gecko-based' |
@@ -22,7 +24,7 @@ export type BrowserTarget =
 // chromium:/gecko:/firefox: scoped manifest keys; the generic
 // '*-based'/'chromium'/'gecko' aliases are matched by substring below.
 const CHROMIUM_BASED_BROWSERS = ['chrome', 'edge', 'brave', 'opera', 'vivaldi', 'yandex']
-const GECKO_BASED_BROWSERS = ['firefox', 'waterfox', 'librewolf']
+const GECKO_BASED_BROWSERS = ['firefox', 'waterfox', 'librewolf', 'zen', 'floorp']
 
 export function filterKeysForThisBrowser (
   manifest: Manifest,
