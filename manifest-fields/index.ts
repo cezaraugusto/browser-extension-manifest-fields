@@ -1,5 +1,4 @@
 import * as path from 'path'
-import * as fs from 'fs'
 
 import {htmlFields} from './html-fields'
 import {iconFields} from './icons-fields'
@@ -10,6 +9,7 @@ import {webResourcesFields} from './web-resources-fields'
 import {themeFields, type ThemeFields} from './theme-fields'
 import {semanticFields, type SemanticFields} from './semantic-fields'
 import {filterKeysForThisBrowser} from '../internal/utils'
+import {readManifestJson} from '../internal/read-manifest-json'
 
 // TODO: cezaraugusto type this
 export interface ManifestFields {
@@ -31,12 +31,7 @@ export function getManifestFieldsData ({
   browser?: string;
 }) {
   const context = path.dirname(manifestPath)
-  // Chrome tolerates a UTF-8 BOM in manifest.json (verified against live
-  // Chrome), so strip it before parsing instead of throwing
-  const rawManifest = fs.readFileSync(manifestPath, 'utf8')
-  const manifest = JSON.parse(
-    rawManifest.charCodeAt(0) === 0xfeff ? rawManifest.slice(1) : rawManifest
-  )
+  const manifest = readManifestJson(manifestPath)
   const manifestNoPrefixes = filterKeysForThisBrowser(
     manifest,
     browser || 'chrome'
