@@ -30,6 +30,7 @@ npm i browser-extension-manifest-fields
 - `content_scripts` entries include both JS and CSS assets when present, preserving ordering.
 - `web_accessible_resources` are passed through as-is for MV3, or strings for MV2.
 - Locales under `_locales/*` are discovered if present.
+- A `manifest.json` with a UTF-8 byte order mark, `//` comments or `/* */` comments is read, since browsers load such a file unpacked. A trailing comma still throws, since no browser reads one.
 - In development, manifest data cooperates with the reload pipeline: CSP and permissions are patched, and minimal background entries are ensured so the reloader can be injected.
 
 ## Usage
